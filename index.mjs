@@ -133,6 +133,160 @@ app.post('/api/sendEmail', async (req , res) => {
     res.status(200).json({ message: 'Request received successfully' });
 });
 
+//endpoint for sending endorsement document when endorsement.issue event is triggered.
+
+
+app.post('/api/endorsementDocument', async (req, res) => {
+    const { id, transactionId, timestamp, data, type, username } = req.body;
+
+    const policyNumber = data["policyLocator"];     // policyLocator  
+
+    const locator = data["endorsementLocator"];
+
+    // Creating Authorization token
+
+    const response_auth = await fetch('https://api.sandbox.socotra.com/account/authenticate', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            username: process.env.tenent_username,
+            password: process.env.tenent_password,
+            hostName: process.env.host_name,
+        }),
+    });
+
+    const js_obj_auth = await response_auth.json();
+    const string_json_auth = JSON.stringify(js_obj_auth);
+    const parse_json_auth = JSON.parse(string_json_auth);
+
+    const auth_token = parse_json_auth.authorizationToken;
+
+
+
+    // Fetching policy from policyLocator
+
+    const response_policy = await fetch("https://api.sandbox.socotra.com/policy/" + policyNumber, {
+        method: 'GET',
+        headers: {
+            "Authorization": auth_token,
+            "Content-type": "application/json; charset=UTF-8"
+        },
+
+    })
+
+    const js_obj_policy = await response_policy.json();
+    const string_json_policy = JSON.stringify(js_obj_policy);
+    const parse_json_policy = JSON.parse(string_json_policy);
+
+    const recipientEmail = parse_json_policy.characteristics[0].fieldValues.email_field_example;
+
+
+
+
+    // Fetching policy from Locator for endosement
+
+
+    const response_Locator = await fetch("https://api.sandbox.socotra.com/endorsements/" + locator, {
+        method: 'GET',
+        headers: {
+            "Authorization": auth_token,
+            "Content-type": "application/json; charset=UTF-8"
+        },
+
+    })
+
+    const js_obj_Locator = await response_Locator.json();
+    const string_json_Locator = JSON.stringify(js_obj_Locator);
+    const parse_json_Locator = JSON.parse(string_json_Locator);
+
+    const doc = parse_json_Locator.documents[0].url;
+
+    const documentType = parse_json_Locator.documents[0].displayName;
+
+
+
+    async function convertURLToPDF(doc) {
+        try {
+            const response = await axios.get(doc, {
+                responseType: 'arraybuffer',
+            });
+
+            const pdfDoc = await PDFDocument.create();
+            const pdfBytes = response.data;
+
+            const externalPdf = await PDFDocument.load(pdfBytes);
+            const externalPages = await pdfDoc.copyPages(externalPdf, externalPdf.getPageIndices());
+            externalPages.forEach((page) => pdfDoc.addPage(page));
+
+
+
+            const pdfBytesWithAttachments = await pdfDoc.save({ useObjectStreams: false });
+            return pdfBytesWithAttachments;
+        } catch (error) {
+            console.error('Error converting URL to PDF:', error);
+            throw error;
+        }
+    }
+
+    async function sendEmailWithAttachment(attach, recipientEmail) {
+        try {
+            const transporter = nodemailer.createTransport({
+                service: 'hotmail',
+                auth: {
+                    user: process.env.sender_email_address,
+                    pass: process.env.sender_password,
+                },
+            });
+
+
+
+            const mailOptions = {
+                from:  process.env.sender_email_address,
+                to: 'suraj.kumar@kmgin.com',
+                subject: documentType + ' Document',
+                text: 'Please find the attached documents.',
+                attachments: attach
+            };
+
+            const result = await transporter.sendMail(mailOptions);
+            console.log('Email sent successfully:', result);
+        } catch (error) {
+            console.error('Error sending email:', error);
+            throw error;
+        }
+    }
+    convertURLToPDF(doc)
+        .then((pdfBytes1) => {
+
+            //convertURLToPDF(invoice_doc)
+            //    .then((pdfBytes2) => {
+            const attachments = [
+                {
+                    filename: 'endosement.pdf',
+                    content: pdfBytes1,
+                }/*,
+                        {
+                            filename: 'Invoice.pdf',
+                            content: pdfBytes2,
+                        },*/
+            ];
+            sendEmailWithAttachment(attachments, recipientEmail);
+            //    })
+            //    .catch((error) => {
+            //        console.log("Error on Sending Mail",error);
+            //    });
+        })
+        .catch((error) => {
+            console.log("Error on Sending Mail", error);
+            // Handle any errors that occurred during the conversion
+        });
+
+    res.status(200).json({ message: 'Request received successfully' });
+});
+
+
 
 // endpoint for data autofill for Zipcode.
 
