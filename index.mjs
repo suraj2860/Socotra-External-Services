@@ -103,7 +103,7 @@ app.post('/api/sendEmail', async (req , res) => {
 
         const mailOptions = {
             from: process.env.sender_email_address,
-            to: 'suraj.kumar@kmgin.com',
+            to: recipientEmail,
             subject: 'Policy Documents',
             text: 'PFA',
             attachments: [
