@@ -4,8 +4,8 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
     service: 'hotmail',
     auth: {
-      user: 'Socotra763@outlook.com',
-      pass: 'Socotra123*',
+      user: '',
+      pass: '',
     },
   });
 
@@ -31,9 +31,9 @@ app.post('/api/sendEmail', async (req , res) => {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            username: 'alice.lee',
-            password: "socotra",
-            hostName: 'ravendra_socotra-configeditor.co.sandbox.socotra.com',
+            username: ,
+            password: ,
+            hostName: ,
         }),
     });
 
@@ -66,7 +66,7 @@ app.post('/api/sendEmail', async (req , res) => {
 
     function sendEmail(to, subject, text) {
         const mailOptions = {
-          from: 'Socotra763@outlook.com',
+          from: ,
           to: to,
           subject: subject,
           text: text
@@ -81,7 +81,7 @@ app.post('/api/sendEmail', async (req , res) => {
         });
       }
 
-      sendEmail('suraj.kumar@kmgin.com', 'Test', 'Quotation Schedule Document : '+doc);
+      sendEmail(, 'Test', 'Quotation Schedule Document : '+doc);
 
     
    //console.log(req.body);
