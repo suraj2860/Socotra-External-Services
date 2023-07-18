@@ -127,7 +127,7 @@ app.post('/api/policyAccept', async (req, res) => {
             throw error;
         }
     }
-    /*convertURLToPDF(doc)
+    convertURLToPDF(doc)
         .then((pdfBytes1) => {
 
             convertURLToPDF(invoice_doc)
@@ -151,33 +151,9 @@ app.post('/api/policyAccept', async (req, res) => {
         .catch((error) => {
             console.log("Error on Sending Mail", error);
             // Handle any errors that occurred during the conversion
-        });*/
+        });
 
-    res.status(200).convertURLToPDF(doc)
-        .then((pdfBytes1) => {
-
-            convertURLToPDF(invoice_doc)
-                .then((pdfBytes2) => {
-                    const attachments = [
-                        {
-                            filename: 'Quotation.pdf',
-                            content: pdfBytes1,
-                        },
-                        {
-                            filename: 'Invoice.pdf',
-                            content: pdfBytes2,
-                        },
-                    ];
-                    sendEmailWithAttachment(attachments, recipientEmail);
-                })
-                .catch((error) => {
-                    console.log("Error on Sending Mail", error);
-                });
-        })
-        .catch((error) => {
-            console.log("Error on Sending Mail", error);
-            // Handle any errors that occurred during the conversion
-        }).json({ message: 'Request received successfully' });
+    res.status(200).json({ message: 'Request received successfully' });
 
 });
 
