@@ -567,7 +567,7 @@ app.post('/api/autofill2', async (req, res) => {
         }
 
         //console.log(fieldValues);
-    if(result == undefined){
+   /*if(result == undefined){
         res.status(201).json( {
 
             //fieldValues : result,
@@ -577,16 +577,16 @@ app.post('/api/autofill2', async (req, res) => {
             fieldValues: result2,
         }]});
     }
-    else{
+    else{*/
         res.status(201).json( {
 
-            fieldValues : result,
+            //fieldValues : result,
             updateExposures : [{ 
             exposureLocator: exposure_locator,
             exposureName: exposure_name,
             fieldValues: result2,
         }]});
-    }
+    
 
     } catch (error) {
         console.error(error);
