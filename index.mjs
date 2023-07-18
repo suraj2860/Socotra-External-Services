@@ -561,7 +561,7 @@ app.post('/api/autofill2', async (req, res) => {
         const string_json2 = JSON.stringify(js_obj2);
         const parse_json2 = JSON.parse(string_json2);
 
-        const result = {
+        const result2 = {
             State: parse_json2[0].State,
             City_Town: parse_json2[0].City
         }
@@ -574,7 +574,7 @@ app.post('/api/autofill2', async (req, res) => {
             updateExposures : [{ 
             exposureLocator: exposure_locator,
             exposureName: exposure_name,
-            fieldValues: result,
+            fieldValues: result2,
         }]});
 
     } catch (error) {
