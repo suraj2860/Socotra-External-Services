@@ -545,8 +545,8 @@ app.post('/api/autofill2', async (req, res) => {
     const exposure_locator = updates.updateExposures[0].exposureLocator;
     const exposure_name = updates.updateExposures[0].exposureName;
 
-    const url = 'https://us-zip-code-information.p.rapidapi.com/?zipcode=' + zip_code2;
-    const options = {
+    const url2 = 'https://us-zip-code-information.p.rapidapi.com/?zipcode=' + zip_code2;
+    const options2 = {
         method: 'GET',
         headers: {
             'X-RapidAPI-Key': process.env.api_key,
@@ -555,15 +555,15 @@ app.post('/api/autofill2', async (req, res) => {
     };
 
     try {
-        const response = await fetch(url, options);
+        const response2 = await fetch(url2, options2);
 
-        const js_obj = await response.json();
-        const string_json = JSON.stringify(js_obj);
-        const parse_json = JSON.parse(string_json);
+        const js_obj2 = await response2.json();
+        const string_json2 = JSON.stringify(js_obj2);
+        const parse_json2 = JSON.parse(string_json2);
 
         const result = {
-            State: parse_json[0].State,
-            City_Town: parse_json[0].City
+            State: parse_json2[0].State,
+            City_Town: parse_json2[0].City
         }
 
         //console.log(fieldValues);
