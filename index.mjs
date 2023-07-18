@@ -508,6 +508,8 @@ app.post('/api/autofill2', async (req, res) => {
     const { operationType, opertaion, updates, productName, policyholderLocator } = req.body;
 
     const zip_code = updates.updateExposures[0].fieldValues.ZIP_Code;
+    const exposure_locator = updates.updateExposures[0].exposureLocator;
+    const exposure_name = updates.updateExposures[0].exposureName;
 
     const url = 'https://us-zip-code-information.p.rapidapi.com/?zipcode=' + zip_code;
     const options = {
@@ -532,7 +534,11 @@ app.post('/api/autofill2', async (req, res) => {
 
         //console.log(fieldValues);
 
-        res.status(201).json( {updateExposures : { fieldValues: result }});
+        res.status(201).json( {updateExposures : { 
+            exposureLocator: exposure_locator,
+            exposureName: exposure_name,
+            fieldValues: result,
+        }});
 
     } catch (error) {
         console.error(error);
