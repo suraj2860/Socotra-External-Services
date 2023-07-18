@@ -570,7 +570,7 @@ app.post('/api/autofill2', async (req, res) => {
 
         res.status(201).json( {
 
-            fieldValues : result,
+            //fieldValues : result,
             updateExposures : [{ 
             exposureLocator: exposure_locator,
             exposureName: exposure_name,
