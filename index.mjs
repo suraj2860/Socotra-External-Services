@@ -507,9 +507,8 @@ app.post('/api/autofill2', async (req, res) => {
     // Access the request body data
     const { operationType, opertaion, updates, productName, policyholderLocator } = req.body;
 
-    const zip_code = updates.updateExposures[0].fieldValues.ZIP_Code;
-    const exposure_locator = updates.updateExposures[0].exposureLocator;
-    const exposure_name = updates.updateExposures[0].exposureName;
+
+    const zip_code = updates.fieldValues.ZIP_Code;
 
     const url = 'https://us-zip-code-information.p.rapidapi.com/?zipcode=' + zip_code;
     const options = {
@@ -534,7 +533,45 @@ app.post('/api/autofill2', async (req, res) => {
 
         //console.log(fieldValues);
 
-        res.status(201).json( {updateExposures : [{ 
+        
+
+    } catch (error) {
+        console.error(error);
+    }
+    
+    
+    
+    const zip_code2 = updates.updateExposures[0].fieldValues.ZIP_Code;
+    const exposure_locator = updates.updateExposures[0].exposureLocator;
+    const exposure_name = updates.updateExposures[0].exposureName;
+
+    const url = 'https://us-zip-code-information.p.rapidapi.com/?zipcode=' + zip_code2;
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': process.env.api_key,
+            'X-RapidAPI-Host': 'us-zip-code-information.p.rapidapi.com'
+        }
+    };
+
+    try {
+        const response = await fetch(url, options);
+
+        const js_obj = await response.json();
+        const string_json = JSON.stringify(js_obj);
+        const parse_json = JSON.parse(string_json);
+
+        const result = {
+            State: parse_json[0].State,
+            City_Town: parse_json[0].City
+        }
+
+        //console.log(fieldValues);
+
+        res.status(201).json( {
+
+            fieldValues : result,
+            updateExposures : [{ 
             exposureLocator: exposure_locator,
             exposureName: exposure_name,
             fieldValues: result,
