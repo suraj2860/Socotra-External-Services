@@ -92,7 +92,7 @@ app.post('/api/policyAccept', async (req, res) => {
 
     async function sendEmailWithAttachment(attach, recipientEmail) {
         try {
-            const transporter = nodemailer.createTransport({
+            const transporter = await nodemailer.createTransport({
                 service: 'hotmail',
                 auth: {
                     user: process.env.sender_email_address,
